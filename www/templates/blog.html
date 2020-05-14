@@ -33,7 +33,7 @@ $(function () {
 
     <div class="uk-width-medium-3-4">
         <article class="uk-article">
-            <h2>{{ blog.name }}</h2>
+            <h2 class="uk-article-title">{{ blog.name }}</h2>
             <p class="uk-article-meta">发表于{{ blog.created_at|datetime }}</p>
             <p>{{ blog.html_content|safe }}</p>
         </article>
