@@ -22,12 +22,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% block meta %}<!-- block meta  -->{% endblock %}
     <title>{% block title %} ? {% endblock %} - Awesome Python Webapp</title>
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet">
     <!-- <link rel="stylesheet" href="/static/css/uikit.min.css"> -->
     <!-- <link rel="stylesheet" href="/static/css/uikit.gradient.min.css"> -->
-    <link rel="stylesheet" href="//unpkg.com/element-ui@2.0.11/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="//unpkg.com/element-ui@2.0.11/lib/theme-chalk/display.css">
+    <!-- element 样式 -->
+    <link rel="stylesheet" href="//unpkg.com/element-ui@2.13.1/lib/theme-chalk/index.css">
+    <!-- <link rel="stylesheet" href="//unpkg.com/element-ui@2.13.1/lib/theme-chalk/display.css"> -->
     <!-- <link rel="stylesheet" href="/static/css/index.css"> -->
+    <!-- 自定义样式 -->
     <link rel="stylesheet" href="/static/css/awesome.css" />
+    <!-- 响应式 -->
+    <link rel="stylesheet" href="/static/css/display.css">
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/sha1.min.js"></script>
     <!-- <script src="/static/js/uikit.min.js"></script> -->
@@ -35,7 +40,7 @@
     <!-- <script src="/static/js/sticky.min.js"></script> -->
     <!-- <script src="/static/js/vue.min.js"></script> -->
     <script src="//unpkg.com/vue/dist/vue.js"></script>
-    <script src="//unpkg.com/element-ui@2.0.11/lib/index.js"></script>
+    <script src="//unpkg.com/element-ui@2.13.1/lib/index.js"></script>
     <script src="/static/js/awesome.js"></script>
     {% block beforehead %}<!-- before head  -->{% endblock %}
 </head>
@@ -44,16 +49,30 @@
     <el-container>
         <el-header height="50px">
             <div class="el-header-logo">
-                <a href="/"><img src="https://file.iviewui.com/dev-dist/7dcf5af41fac2e4728549fa7e73d61c5.svg" class="el-header-logo-img"></a>
+                <a href="/" class="hidden-xs-only"><img src="https://file.iviewui.com/dev-dist/7dcf5af41fac2e4728549fa7e73d61c5.svg" class="el-header-logo-img"></a>
+                <a href="/" class="hidden-sm-and-up"><i class="el-header-aside-icon fa fa-home"></i></a>
+                <el-dropdown class="hidden-sm-and-up" @command="handleCommand">
+                    <span class="el-header-aside-icon el-dropdown-link">
+                        <i class="fa fa-navicon"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="a">处理中心</el-dropdown-item>
+                        <el-dropdown-item divided disabled>我的工作台</el-dropdown-item>
+                        <el-dropdown-item command="a">选项1</el-dropdown-item>
+                        <el-dropdown-item command="a">选项2</el-dropdown-item>
+                        <el-dropdown-item command="a">选项3</el-dropdown-item>
+                        <el-dropdown-item command="a" divided>订单管理</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
             </div>
             <div class="el-header-menu">
-                <el-menu :default-active="activeIndex" class="hidden-xs-only" mode="horizontal" @select="handleSelect">
+                <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" class="hidden-xs-only">
                     <el-menu-item index="1">处理中心</el-menu-item>
                     <el-submenu index="2">
-                      <template slot="title">我的工作台</template>
-                      <el-menu-item index="2-1">选项1</el-menu-item>
-                      <el-menu-item index="2-2">选项2</el-menu-item>
-                      <el-menu-item index="2-3">选项3</el-menu-item>
+                        <template slot="title">我的工作台</template>
+                        <el-menu-item index="2-1">选项1</el-menu-item>
+                        <el-menu-item index="2-2">选项2</el-menu-item>
+                        <el-menu-item index="2-3">选项3</el-menu-item>
                     </el-submenu>
                     <el-menu-item index="3"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
                 </el-menu>
@@ -61,20 +80,18 @@
             <div class="el-header-right">
                 <div class="el-header-aside">
                     <el-dropdown>
-                        <span class="el-header-aside-icon el-avatar">
-                            <img src="https://dev-file.iviewui.com/avatar_default/avatar">
-                        </span>
+                        <el-badge is-dot>
+                            <el-avatar src="https://dev-file.iviewui.com/avatar_default/avatar"></el-avatar>
+                        </el-badge>
                         <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item>黄金糕</el-dropdown-item>
-                          <el-dropdown-item>狮子头</el-dropdown-item>
-                          <el-dropdown-item>螺蛳粉</el-dropdown-item>
-                          <el-dropdown-item disabled>双皮奶</el-dropdown-item>
-                          <el-dropdown-item divided>蚵仔煎</el-dropdown-item>
+                          <el-dropdown-item icon="el-icon-user-solid"> jeff</el-dropdown-item>
+                          <el-dropdown-item icon="el-icon-setting" divided> 管理后台</el-dropdown-item>
+                          <el-dropdown-item icon="el-icon-s-unfold" divided> 退出</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                     <el-dropdown>
                         <span class="el-header-aside-icon">
-                            <i class="el-icon el-icon-plus" style="font-size: 22px;"></i>
+                            <i class="el-icon el-icon-plus" style="font-size: 20px;"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
                           <el-dropdown-item>黄金糕</el-dropdown-item>
@@ -89,9 +106,33 @@
         </el-header>
         <el-main>
             <div class="el-main-layout">
-                <el-row :gutter="40">
-                    <el-col :span="6" :xs="24" :sm="16" :md="18" :lg="18" :xl="20"><div class="grid-content bg-purple"></div></el-col>
-                    <el-col :span="6" :sm="8" :md="8" :lg="6" :xl="4" class="hidden-xs-only">
+                <el-row type="flex" justify="center" :gutter="20">
+                    <el-col :span="6" :xs="24" :sm="24" >
+                        <div class="grid-content box-shadow">
+                            <el-row class="event">
+                                <el-col :span="18">
+                                    <div class="grid-content bg-purple">
+                                        <a href="/" class="grid-content-title">初入计算机技术领域的萌新需要理清的逻辑</a>
+                                        <div class="summary">
+                                            "你好，亲爱的 iView 开发者（准开发者），很高兴你能使用到我们新上线的 iView 开发者社区。iView 从立项到现在已经经历了两年的时间，7 月  28 日是它两周岁的生日，在这一天，我们荣幸的召开了新品发布会并发布了 iView 3.0。对于初入社区的你，这篇文章将是一个很好的导引，下面就带你玩转 iView Developer。"
+                                        </div>
+                                        <div></div>
+                                    </div>
+                                </el-col>
+                                <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
+                            </el-row>
+                            <!-- <div class="event">
+                                <div class="content">
+                                    <div class="title"></div>
+                                    <div class="meta"></div>
+                                </div>
+                                <div class="item-meta">
+                                    
+                                </div>
+                            </div> -->
+                        </div>
+                    </el-col>
+                    <el-col class="hidden-xs-only siderbar-right">
                         <div id="card-link">
                             <el-card class="box-card">
                               <div slot="header" class="clearfix">
@@ -129,6 +170,9 @@
         methods: {
             handleSelect(key, keyPath) {
                 console.log(key, keyPath);
+            },
+            handleCommand(command){
+                this.$message('click on item ' + command);
             }
         }
     }

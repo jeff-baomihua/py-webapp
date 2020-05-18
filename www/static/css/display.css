@@ -4,6 +4,15 @@
 	.hidden-xs-only {
 		display: none!important
 	}
+	.el-header{
+		padding: 0 20px;
+	}
+	.el-main{
+		padding: 15px
+	}
+	.el-main-layout{
+		width: 100%;
+	}
 }
 /* 768 ~ px */
 @media only screen and (min-width: 768px) {

@@ -31,6 +31,17 @@ a {
 	height: 50px;
 	line-height: 50px;
 }
+.fa {
+    font-size: 1.55em;
+    color: #606266;
+}
+.el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+}
+.el-icon-arrow-down {
+    font-size: 12px;
+}
 #vm {
     display: none;
 }
@@ -49,7 +60,7 @@ a {
 
 /* 布局 */
   .el-row {
-    margin-bottom: 20px;
+    /* margin-bottom: 20px; */
   }
   .el-col {
     border-radius: 4px;
@@ -66,6 +77,7 @@ a {
   .grid-content {
     border-radius: 4px;
     min-height: 36px;
+    /* background-color: #FFF; */
   }
   .row-bg {
     padding: 10px 0;
@@ -97,6 +109,11 @@ a {
     margin-top: 8px;
     padding-right: 15px;
 }
+.el-header-logo .fa {
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: 3px;
+}
 .el-header-menu{
     float: left;
 }
@@ -108,8 +125,9 @@ a {
     float: right;
 }
 .el-header-aside {
-    height: 50px;
-    line-height: 48px;
+    /* height: 50px;
+    line-height: 50px; */
+    padding: 9px;
 }
 .el-header-aside-icon {
     display: inline-block;
@@ -157,6 +175,43 @@ a {
 .el-main-layout {
     width: 90%;
     margin: 0 auto;
+    max-width: 1200px;
+}
+.box-shadow{
+    /* border: 1px solid #EBEEF5; */
+    background-color: #FFF;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04);
+}
+.siderbar-right {
+    width: 316px;
+    float: right;
+}
+.siderbar-left {
+    width: 316px;
+    float: left;
+}
+.event{
+    background: #FFF;
+    border-radius: 1px;
+    position: relative;
+    padding: 15px ;
+    border-bottom: 1px solid #dcdfe6;;
+}
+.summary{
+    display: block;
+    color: #616776;
+    overflow: hidden;
+}
+.grid-content-title{
+    margin: 12px 0;
+    font-size: 1em;
+    font-weight: 700;
+    line-height: 26px;
+    display: inline-block;
+    color: rgba(0, 0, 0, .87);
+}
+.grid-content-title:hover {
+    color: #2d8cf0;
 }
 
 
