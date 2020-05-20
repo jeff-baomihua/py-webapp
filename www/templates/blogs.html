@@ -11,36 +11,69 @@
 
 {% block content %}
 
-    <div class="uk-width-medium-3-4">
-    {% for blog in blogs %}
-        <article class="uk-article">
-            <h2><a href="/blog/{{ blog.id }}">{{ blog.name }}</a></h2>
-            <p class="uk-article-meta">发表于{{ blog.created_at|datetime }}</p>
-            <p>{{ blog.summary }}</p>
-            <p><a href="/blog/{{ blog.id }}">继续阅读 <i class="uk-icon-angle-double-right"></i></a></p>
-        </article>
-        <hr class="uk-article-divider">
-    {% endfor %}
-    {{ pagination('/?page=', page) }}
-    </div>
-
-    <div class="uk-width-medium-1-4">
-        <div class="uk-panel uk-panel-header">
-            <h3 class="uk-panel-title">友情链接</h3>
-            <ul class="uk-list uk-list-line">
-                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="http://www.liaoxuefeng.com/category/0013738748415562fee26e070fa4664ad926c8e30146c67000">编程</a></li>
-                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="http://www.liaoxuefeng.com/category/0013738748248885ddf38d8cd1b4803aa74bcda32f853fd000">读书</a></li>
-                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="http://www.liaoxuefeng.com/wiki/001374738125095c955c1e6d8bb493182103fac9270762a000">Python教程</a></li>
-                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="http://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000">Git教程</a></li>
-            </ul>
-        </div>
-        <div class="uk-panel uk-panel-header">
-            <h3 class="uk-panel-title">快速通道</h3>
-            <ul class="uk-list uk-list-line">
-                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="http://shop.hupo.site:88">商城</a></li>
-                <li><i class="uk-icon-thumbs-o-up"></i> <a target="_blank" href="http://book.hupo.site:88">读书</a></li>
-            </ul>
-        </div>
-    </div>
-
+    <el-row type="flex" justify="center" :gutter="20">
+        <el-col :span="6" :xs="24" :sm="24" >
+            <div class="grid-content box-shadow">
+                <!-- 内容列 -->
+                {% for blog in blogs %}
+                <el-row class="event">
+                    <el-col :span="24">
+                        <div class="event-title">
+                            <a href="/blog/[[ blog.id ]]">[[ blog.name ]]</a>
+                        </div>
+                        <a href="/blog/[[ blog.id ]]" class="event-summary">
+                            <div class="event-summary-cover right" style="background-image: url('https://dev-file.iviewui.com/hqegWf0w32KCIveKIafRU3ZmYfXugsI8/small');">
+                            </div>
+                            <div class="event-summary-content">
+                                [[ blog.summary ]]
+                            </div>
+                        </a>
+                        <div class="event-footer">
+                            <el-link type="primary" :underline="false"><img class="ui image display-inline-block mr-1" style="width:16px;height:16px;margin-bottom: 3px;" src="https://cdn.learnku.com//uploads/communities/sNljssWWQoW6J88O9G37.png"></el-link>
+                            <el-divider direction="vertical"></el-divider>
+                            <el-link type="primary">
+                                <span class="hidden-xs-only">发表于</span>
+                                [[ blog.created_at|datetime ]]
+                            </el-link>
+                            <el-divider direction="vertical"></el-divider>
+                            <el-link type="success">
+                                <span class="hidden-xs-only">阅读数</span>
+                                <i class="el-icon-view hidden-sm-and-up"></i>
+                                 1809
+                            </el-link>
+                            <el-divider direction="vertical"></el-divider>
+                            <el-link type="warning">
+                                <span class="hidden-xs-only">评论数</span>
+                                <i class="el-icon-s-comment hidden-sm-and-up"></i>
+                                 2020
+                            </el-link>
+                        </div>
+                    </el-col>
+                </el-row>
+                {% endfor %}
+                <!-- [[ pagination('/?page=', page) ]] -->
+                <br>
+                <el-pagination
+                :page-size="10"
+                :pager-count="11"
+                layout="prev, pager, next"
+                :total="20">
+                </el-pagination>
+                <br>
+            </div>
+        </el-col>
+        <el-col class="hidden-xs-only siderbar-right">
+            <el-card class="box-card">
+                <div slot="header" class="clearfix">
+                    <i class="el-icon-s-flag"></i>
+                    <span>快速通道</span>
+                </div>
+                <div class="text item">
+                    <el-link href="http://shop.hupo.site:88" target="_blank" type="danger" >商城</el-link>
+                    <el-divider class="el-divider--horizontal-small"></el-divider>
+                    <el-link href="http://shop.hupo.site:88" target="_blank" type="primary">读书</el-link>
+                </div>
+            </el-card>
+        </el-col>
+    </el-row>
 {% endblock %}

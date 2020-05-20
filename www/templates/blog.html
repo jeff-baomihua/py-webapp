@@ -1,37 +1,231 @@
 {% extends '__base__.html' %}
 
-{% block title %}{{ blog.name }}{% endblock %}
+{% block title %}[[ blog.name ]]{% endblock %}
 
 {% block beforehead %}
 
 <script>
 
-var comment_url = '/api/blogs/{{ blog.id }}/comments';
 
-$(function () {
-    var $form = $('#form-comment');
-    $form.submit(function (e) {
-        e.preventDefault();
-        $form.showFormError('');
-        var content = $form.find('textarea').val().trim();
-        if (content==='') {
-            return $form.showFormError('请输入评论内容！');
-        }
-        $form.postJSON(comment_url, { content: content }, function (err, result) {
-            if (err) {
-                return $form.showFormError(err);
-            }
-            refresh();
-        });
-    });
-});
+
+var comment_url = '/api/blogs/[[ blog.id ]]/comments';
+
+// $(function () {
+//     var $form = $('#form-comment');
+//     $form.submit(function (e) {
+//         e.preventDefault();
+//         $form.showFormError('');
+//         var content = $form.find('textarea').val().trim();
+//         if (content==='') {
+//             return $form.showFormError('请输入评论内容！');
+//         }
+//         $form.postJSON(comment_url, { content: content }, function (err, result) {
+//             if (err) {
+//                 return $form.showFormError(err);
+//             }
+//             refresh();
+//         });
+//     });
+// });
 </script>
 
 {% endblock %}
 
 {% block content %}
-
-    <div class="uk-width-medium-3-4">
+<el-row type="flex" justify="center" :gutter="10">
+    <el-col :span="6" :xs="24" :sm="24" class="main-col">
+        <div class="grid-content box-shadow">
+            <div class="segment">
+                <h2 style="margin-bottom: 15px;">
+                    <div class="pull-left">
+                        <span style="line-height: 34px;">[[ blog.name ]]</span>
+                    </div>
+                    <div class="clearfix"></div>
+                </h1>
+                <p style="margin-bottom: 10px;">
+                    <el-link type="primary" :underline="false"><img style="width:16px;height:16px;margin-bottom:-3px;" src="https://cdn.learnku.com//uploads/communities/sNljssWWQoW6J88O9G37.png"></el-link>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-link type="success">
+                        <span class="hidden-xs-only">阅读数</span>
+                        <i class="el-icon-view hidden-sm-and-up"></i>
+                         1809
+                    </el-link>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-link type="warning">
+                        <span class="hidden-xs-only">评论数</span>
+                        <i class="el-icon-s-comment hidden-sm-and-up"></i>
+                         2020
+                    </el-link>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-link type="primary">
+                        <span class="hidden-xs-only">发表于</span>
+                        [[ blog.created_at|datetime ]]
+                    </el-link>
+                </p>
+                <el-divider></el-divider>
+                <div class="article-content">
+                    [[ blog.html_content|safe ]]
+                </div>
+            </div>
+        </div>
+        <div class="grid-content box-shadow">
+            <div class="segment article-content">
+                <a href="/" class="left">
+                    <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
+                </a>
+                <div class="meta" style="max-width: 100%;display: inline-flex;">
+                    <a href="/" class="author">[[ __user__.name ]]</a>
+                </div>
+                <div class="text">
+                    暂无个人描述~    
+                </div>
+            </div>
+        </div>
+        <el-divider><i class="el-icon-s-comment"></i>讨论数量 3</el-divider>
+        <div class="grid-content">
+            <div id="vm">
+                <div class="comment">
+                    <a href="/" class="left">
+                        <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
+                    </a>
+                    <!-- 评论 -->
+                    <el-card class="box-card box-shadow">
+                        <el-input
+                        type="textarea"
+                        :rows="4"
+                        placeholder="说点什么吧"
+                        v-model="textarea"
+                        maxlength="200"
+                        resize="none"
+                        show-word-limit
+                        >
+                        </el-input>
+                        <div style="margin-top: 15px;"></div>
+                        <el-button v-on:click="click" type="primary" size="medium">发表评论</el-button>
+                    </el-card>
+                </div>
+            </div>
+            <!-- 评论列表 -->
+            <div class="comment">
+                <a href="/" class="left">
+                    <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
+                </a>
+                <el-card class="box-card box-shadow">
+                    <!-- box-header -->
+                    <div slot="header" class="clearfix">
+                        <a href="/"><span class="author">[[ __user__.name ]]</span></a>
+                        <span class="separator"></span>
+                        <span class="el-link cursor-default">2020-05-17 18:50:53</span>
+                        <el-tooltip class="item" effect="dark" content="回复" placement="top">
+                            <el-button style="float: right; padding: 3px 0" type="text">
+                                <i class="el-icon-chat-dot-round" style="font-size: 16px;"></i>
+                            </el-button>
+                        </el-tooltip>
+                    </div>
+                    <!-- box-body -->
+                    <!-- <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image"> -->
+                    好吃的汉堡
+                    我喜欢的恢复湖面
+                    <!-- box-footer -->
+                    <el-divider class="el-divider--horizontal-medium"></el-divider>
+                    <p>
+                        <el-link :underline="false">
+                            <i class="fa fa-thumbs-o-up"></i> 1809
+                        </el-link>
+                        <span class="separator"></span>
+                        <el-link :underline="false"> 回复</el-link>
+                    </p>
+                </el-card>
+            </div>
+            <div class="comment">
+                <a href="/" class="left">
+                    <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
+                </a>
+                <el-card class="box-card box-shadow">
+                    <!-- box-header -->
+                    <div slot="header" class="clearfix">
+                        <a href="/"><span class="author">[[ __user__.name ]]</span></a>
+                        <span class="separator"></span>
+                        <span class="el-link cursor-default">2020-05-17 18:50:53</span>
+                        <el-tooltip class="item" effect="dark" content="回复" placement="top">
+                            <el-button style="float: right; padding: 3px 0" type="text">
+                                <i class="el-icon-chat-dot-round" style="font-size: 16px;"></i>
+                            </el-button>
+                        </el-tooltip>
+                    </div>
+                    <!-- box-body -->
+                    <!-- <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image"> -->
+                    <div>
+                        @jeff 好吃的汉堡
+                        我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面
+                    </div>
+                    <!-- box-footer -->
+                    <el-divider class="el-divider--horizontal-medium"></el-divider>
+                    <p>
+                        <el-link :underline="false">
+                            <i class="fa fa-thumbs-o-up"></i> 1809
+                        </el-link>
+                        <span class="separator"></span>
+                        <el-link :underline="false"> 回复</el-link>
+                    </p>
+                </el-card>
+            </div>
+            <div class="comment">
+                <a href="/" class="left">
+                    <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
+                </a>
+                <el-card class="box-card box-shadow">
+                    <!-- box-header -->
+                    <div slot="header" class="clearfix">
+                        <a href="/"><span class="author">[[ __user__.name ]]</span></a>
+                        <span class="separator"></span>
+                        <span class="el-link cursor-default">2020-05-17 18:50:53</span>
+                        <el-tooltip class="item" effect="dark" content="回复" placement="top">
+                            <el-button style="float: right; padding: 3px 0" type="text">
+                                <i class="el-icon-chat-dot-round" style="font-size: 16px;"></i>
+                            </el-button>
+                        </el-tooltip>
+                    </div>
+                    <!-- box-body -->
+                    <!-- <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image"> -->
+                    好吃的汉堡
+                    我喜欢的恢复湖面
+                    <!-- box-footer -->
+                    <el-divider class="el-divider--horizontal-medium"></el-divider>
+                    <p>
+                        <el-link :underline="false">
+                            <i class="fa fa-thumbs-o-up"></i> 1809
+                        </el-link>
+                        <span class="separator"></span>
+                        <el-link :underline="false"> 回复</el-link>
+                    </p>
+                </el-card>
+            </div>
+        </div>
+    </el-col>
+    <el-col class="hidden-xs-only siderbar-right">
+        <el-card class="box-card center">
+            <a href="/">
+                <el-avatar :size="100" src="[[ __user__.image ]]"></el-avatar>
+            </a>
+            <br>
+            <br>
+            <el-link type="primary" class="author">[[ __user__.name ]]</el-link>
+        </el-card>
+        <el-card class="box-card">
+            <div slot="header" class="clearfix">
+                <i class="el-icon-s-flag"></i>
+                <span>快速通道</span>
+            </div>
+            <div class="text item">
+                <el-link href="http://shop.hupo.site:88" target="_blank" type="danger" >商城</el-link>
+                <el-divider class="el-divider--horizontal-small"></el-divider>
+                <el-link href="http://shop.hupo.site:88" target="_blank" type="primary">读书</el-link>
+            </div>
+        </el-card>
+    </el-col>
+    
+    <!-- <div class="uk-width-medium-3-4">
         <article class="uk-article">
             <h2 class="uk-article-title">{{ blog.name }}</h2>
             <p class="uk-article-meta">发表于{{ blog.created_at|datetime }}</p>
@@ -102,6 +296,50 @@ $(function () {
                 <li><i class="uk-icon-link"></i> <a href="#">读书</a></li>
             </ul>
         </div>
-    </div>
+    </div> -->
 
 {% endblock %}
+
+
+<!-- <script>
+$(function(){
+    // var Main1 = {
+    //     data() {
+    //         return {
+    //         text: '',
+    //         textarea: ''
+    //         }
+    //     },
+    //     methods: {
+    //         click: function(){
+    //             alert(111);
+    //         }
+    //     }
+    // }
+    // var Ctor1 = Vue.extend(Main1)
+    // new Ctor1().$mount('#vm')
+    var vm = new Vue({
+        el: '#vm',// 绑定 DOM
+        data: {
+            textarea: ''
+        },// 数据模型
+        methods: { // 触发方法
+            click: function (event) {
+                alert(111);
+                // event.preventDefault();
+                // var $form = $('#vm').find('form');
+                // $form.postJSON(action, this.$data, function (err, r) {
+                //     if (err) {
+                //         $form.showFormError(err);
+                //     }
+                //     else {
+                //         return location.assign('/manage/blogs');
+                //     }
+                // });
+            }
+        }
+    });
+    $('#vm').show();
+})
+</script> -->
+

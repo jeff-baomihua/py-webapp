@@ -10,6 +10,9 @@
 	.el-main{
 		padding: 15px
 	}
+	.el-header-layout{
+		width: 100%;
+	}
 	.el-main-layout{
 		width: 100%;
 	}

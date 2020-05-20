@@ -4,11 +4,36 @@
 
 {% block beforehead %}
 
-<script>
+<script> 
 
 function initVM(data) {
+    // Vue.component("parent",{
+    //     template: '#vm',
+    //     data: {
+    //         blogs: data.blogs,
+    //         page: data.page
+    //     },
+    //     methods: {
+    //         edit_blog: function (blog) {
+    //             location.assign('/manage/blogs/edit?id=' + blog.id);
+    //         },
+    //         delete_blog: function (blog) {
+    //             if (confirm('确认要删除“' + blog.name + '”？删除后不可恢复！')) {
+    //                 postJSON('/api/blogs/' + blog.id + '/delete', function (err, r) {
+    //                     if (err) {
+    //                         return alert(err.message || err.error || err);
+    //                     }
+    //                     refresh();
+    //                 });
+    //             }
+    //         }
+    //     }
+    // });
+    console.log(data);
+    
+    $('#vm').show();
     var vm = new Vue({
-        el: '#vm',
+        el: '#app',
         data: {
             blogs: data.blogs,
             page: data.page
@@ -29,12 +54,12 @@ function initVM(data) {
             }
         }
     });
-    $('#vm').show();
+    // $('#vm').show();
 }
 
 $(function() {
     getJSON('/api/blogs', {
-        page: {{ page_index }}
+        page: [[ page_index ]]
     }, function (err, results) {
         if (err) {
             return fatal(err);
@@ -80,22 +105,22 @@ $(function() {
                 </tr>
             </thead>
             <tbody>
-                <!-- v-repeat 循环 -->
-                <tr v-repeat="blog: blogs" >
+                <!-- v-for 循环 -->
+                <tr v-for="blog in blogs" >
                     <td>
                         <!-- v-attr 生成DOM节点属性 -->
                         <!-- v-text 生成文本 -->
-                        <a target="_blank" v-attr="href: '/blog/'+blog.id" v-text="blog.name"></a>
+                        <a target="_blank" :href="'/blog/' + blog.id" v-text="blog.name"></a>
                     </td>
                     <td>
-                        <a target="_blank" v-attr="href: '/user/'+blog.user_id" v-text="blog.user_name"></a>
+                        <a target="_blank" :href="'/user/' + blog.user_id" v-text="blog.user_name"></a>
                     </td>
                     <td>
                         <span v-text="blog.created_at.toDateTime()"></span>
                     </td>
                     <td>
-                        <a href="#0" v-on="click: edit_blog(blog)"><i class="uk-icon-edit"></i>
-                        <a href="#0" v-on="click: delete_blog(blog)"><i class="uk-icon-trash-o"></i>
+                        <a href="#0" v-on:click="edit_blog(blog)"><i class="uk-icon-edit"></i>
+                        <a href="#0" v-on:click="delete_blog(blog)"><i class="uk-icon-trash-o"></i>
                     </td>
                 </tr>
             </tbody>

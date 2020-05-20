@@ -26,7 +26,7 @@
     <!-- <link rel="stylesheet" href="/static/css/uikit.min.css"> -->
     <!-- <link rel="stylesheet" href="/static/css/uikit.gradient.min.css"> -->
     <!-- element 样式 -->
-    <link rel="stylesheet" href="//unpkg.com/element-ui@2.13.1/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="//unpkg.com/element-ui@2.13.2/lib/theme-chalk/index.css">
     <!-- <link rel="stylesheet" href="//unpkg.com/element-ui@2.13.1/lib/theme-chalk/display.css"> -->
     <!-- <link rel="stylesheet" href="/static/css/index.css"> -->
     <!-- 自定义样式 -->
@@ -35,131 +35,121 @@
     <link rel="stylesheet" href="/static/css/display.css">
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/sha1.min.js"></script>
-    <!-- <script src="/static/js/uikit.min.js"></script> -->
+    <script src="/static/js/uikit.min.js"></script>
     <!-- <script src="/static/js/uikit-icons.min.js"></script> -->
-    <!-- <script src="/static/js/sticky.min.js"></script> -->
+    <script src="/static/js/sticky.min.js"></script>
     <!-- <script src="/static/js/vue.min.js"></script> -->
     <script src="//unpkg.com/vue/dist/vue.js"></script>
-    <script src="//unpkg.com/element-ui@2.13.1/lib/index.js"></script>
+    <script src="//unpkg.com/element-ui@2.13.2/lib/index.js"></script>
     <script src="/static/js/awesome.js"></script>
-    {% block beforehead %}<!-- before head  -->{% endblock %}
 </head>
 <body>
 <div id="app">
     <el-container>
         <el-header height="50px">
-            <div class="el-header-logo">
-                <a href="/" class="hidden-xs-only"><img src="https://file.iviewui.com/dev-dist/7dcf5af41fac2e4728549fa7e73d61c5.svg" class="el-header-logo-img"></a>
-                <a href="/" class="hidden-sm-and-up"><i class="el-header-aside-icon fa fa-home"></i></a>
-                <el-dropdown class="hidden-sm-and-up" @command="handleCommand">
-                    <span class="el-header-aside-icon el-dropdown-link">
-                        <i class="fa fa-navicon"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="a">处理中心</el-dropdown-item>
-                        <el-dropdown-item divided disabled>我的工作台</el-dropdown-item>
-                        <el-dropdown-item command="a">选项1</el-dropdown-item>
-                        <el-dropdown-item command="a">选项2</el-dropdown-item>
-                        <el-dropdown-item command="a">选项3</el-dropdown-item>
-                        <el-dropdown-item command="a" divided>订单管理</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
-            </div>
-            <div class="el-header-menu">
-                <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" class="hidden-xs-only">
-                    <el-menu-item index="1">处理中心</el-menu-item>
-                    <el-submenu index="2">
-                        <template slot="title">我的工作台</template>
-                        <el-menu-item index="2-1">选项1</el-menu-item>
-                        <el-menu-item index="2-2">选项2</el-menu-item>
-                        <el-menu-item index="2-3">选项3</el-menu-item>
-                    </el-submenu>
-                    <el-menu-item index="3"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
-                </el-menu>
-            </div>
-            <div class="el-header-right">
-                <div class="el-header-aside">
-                    <el-dropdown>
-                        <el-badge is-dot>
-                            <el-avatar src="https://dev-file.iviewui.com/avatar_default/avatar"></el-avatar>
-                        </el-badge>
-                        <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item icon="el-icon-user-solid"> jeff</el-dropdown-item>
-                          <el-dropdown-item icon="el-icon-setting" divided> 管理后台</el-dropdown-item>
-                          <el-dropdown-item icon="el-icon-s-unfold" divided> 退出</el-dropdown-item>
-                        </el-dropdown-menu>
-                    </el-dropdown>
-                    <el-dropdown>
-                        <span class="el-header-aside-icon">
-                            <i class="el-icon el-icon-plus" style="font-size: 20px;"></i>
+            <div id="app-header" class="el-header-layout">
+                <div class="el-header-logo">
+                    <a href="/" class="hidden-xs-only">
+                        <b class="el-header-logo-img">Awesome</b>
+                    </a>
+                    <a href="/" class="hidden-sm-and-up"><i class="el-header-aside-icon fa fa-home fa-sm"></i></a>
+                    <el-dropdown class="hidden-sm-and-up" @command="handleCommand" placement="bottom-end">
+                        <span class="el-header-aside-icon el-dropdown-link">
+                            <i class="fa fa-navicon fa-sm"></i>
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                          <el-dropdown-item>黄金糕</el-dropdown-item>
-                          <el-dropdown-item>狮子头</el-dropdown-item>
-                          <el-dropdown-item>螺蛳粉</el-dropdown-item>
-                          <el-dropdown-item disabled>双皮奶</el-dropdown-item>
-                          <el-dropdown-item divided>蚵仔煎</el-dropdown-item>
+                            <el-dropdown-item command="a">处理中心</el-dropdown-item>
+                            <el-dropdown-item divided disabled>我的工作台</el-dropdown-item>
+                            <el-dropdown-item command="a">选项1</el-dropdown-item>
+                            <el-dropdown-item command="a">选项2</el-dropdown-item>
+                            <el-dropdown-item command="a">选项3</el-dropdown-item>
+                            <el-dropdown-item command="a" divided>订单管理</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
+                </div>
+                <div class="el-header-menu">
+                    <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" class="hidden-xs-only">
+                        <el-menu-item index="1">处理中心</el-menu-item>
+                        <el-submenu index="2">
+                            <template slot="title">我的工作台</template>
+                            <el-menu-item index="2-1">选项1</el-menu-item>
+                            <el-menu-item index="2-2">选项2</el-menu-item>
+                            <el-menu-item index="2-3">选项3</el-menu-item>
+                        </el-submenu>
+                        <el-menu-item index="3"><a href="https://www.ele.me" target="_blank">订单管理</a></el-menu-item>
+                    </el-menu>
+                </div>
+                <div class="el-header-right">
+                    <div class="el-header-aside">
+                        {% if __user__ %}
+                        <el-dropdown @command="handleCommand">
+                            <el-badge is-dot>
+                                <el-avatar src="https://dev-file.iviewui.com/avatar_default/avatar"></el-avatar>
+                            </el-badge>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item icon="el-icon-user-solid"> [[ __user__.name ]] </el-dropdown-item>
+                                {% if __user__.admin == 1 %}
+                                <el-dropdown-item command="/manage/blogs" icon="el-icon-setting" divided> 后台管理</el-dropdown-item>
+                                {% endif %}
+                                <el-dropdown-item command="/signout" icon="el-icon-s-unfold" divided> 退出</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                        <el-dropdown>
+                            <span class="el-header-aside-icon">
+                                <i class="el-icon el-icon-plus" style="font-size: 20px;"></i>
+                            </span>
+                            <el-dropdown-menu slot="dropdown">
+                              <el-dropdown-item>黄金糕</el-dropdown-item>
+                              <el-dropdown-item>狮子头</el-dropdown-item>
+                              <el-dropdown-item>螺蛳粉</el-dropdown-item>
+                              <el-dropdown-item disabled>双皮奶</el-dropdown-item>
+                              <el-dropdown-item divided>蚵仔煎</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                        {% else %}
+                        <el-link class="el-header-aside-link" href="/signin" type="primary"> 登陆</el-link>
+                        <span class="separator">·</span>
+                        <el-link class="el-header-aside-link" href="/register" type="primary"> 注册</el-link>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </el-header>
         <el-main>
             <div class="el-main-layout">
-                <el-row type="flex" justify="center" :gutter="20">
-                    <el-col :span="6" :xs="24" :sm="24" >
-                        <div class="grid-content box-shadow">
-                            <el-row class="event">
-                                <el-col :span="18">
-                                    <div class="grid-content bg-purple">
-                                        <a href="/" class="grid-content-title">初入计算机技术领域的萌新需要理清的逻辑</a>
-                                        <div class="summary">
-                                            "你好，亲爱的 iView 开发者（准开发者），很高兴你能使用到我们新上线的 iView 开发者社区。iView 从立项到现在已经经历了两年的时间，7 月  28 日是它两周岁的生日，在这一天，我们荣幸的召开了新品发布会并发布了 iView 3.0。对于初入社区的你，这篇文章将是一个很好的导引，下面就带你玩转 iView Developer。"
-                                        </div>
-                                        <div></div>
-                                    </div>
-                                </el-col>
-                                <el-col :span="6"><div class="grid-content bg-purple"></div></el-col>
-                            </el-row>
-                            <!-- <div class="event">
-                                <div class="content">
-                                    <div class="title"></div>
-                                    <div class="meta"></div>
-                                </div>
-                                <div class="item-meta">
-                                    
-                                </div>
-                            </div> -->
-                        </div>
-                    </el-col>
-                    <el-col class="hidden-xs-only siderbar-right">
-                        <div id="card-link">
-                            <el-card class="box-card">
-                              <div slot="header" class="clearfix">
-                                <span>卡片名称</span>
-                                <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-                              </div>
-                              <div v-for="o in 4" :key="o" class="text item">
-                                {{'列表内容 ' + o }}
-                              </div>
-                            </el-card>
-                        </div>
-                    </el-col>
-                  </el-row>
+                <!-- content -->
+                {% block content %}
+                {% endblock %}
+                <!-- // content -->
             </div>
         </el-main>
-        <el-footer>
-            <div class="el-footer-layout">
-                <p>
-                    <a target="_blank" href="http://weibo.com/liaoxuefeng" class="uk-icon-button uk-icon-weibo"></a>
-                    <a target="_blank" href="https://github.com/michaelliao" class="uk-icon-button uk-icon-github"></a>
-                </p>
-                <p>Powered by <a href="http://awesome.liaoxuefeng.com">Awesome Python Webapp</a>. Copyright &copy; 2020. </p>
-                <p><a href="http://www.liaoxuefeng.com/" target="_blank">www.liaoxuefeng.com</a>. All rights reserved.</p>
-            </div>
+        <el-footer height="100%" class="el-footer-layout"> 
+            <el-row type="flex" justify="space-between">
+                <el-col :span="24">
+                    <a target="_blank" href="https://www.weibo.com/u/2979863030">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-weibo fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                    <a target="_blank" href="https://github.com/Jeff-wangjunchang">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </el-col>
+            </el-row>
+            <p style="color: #606f7b;">Powered by <a href="http://awesome.liaoxuefeng.com">Awesome Python Webapp</a>. Copyright &copy; 2020. </p>
+            <p style="color: #606f7b;"><a href="http://www.liaoxuefeng.com/" target="_blank">www.liaoxuefeng.com</a>. All rights reserved.</p>
         </el-footer>
     </el-container>
+    <div>
+        <el-backtop :bottom="100" style="box-shadow: 0 0 6px rgba(0,0,16,0.52)"></el-backtop>
+    </div>
 </div>
+</body>
+<!-- main script -->
 <script>
     var Main = {
         data() {
@@ -172,65 +162,15 @@
                 console.log(key, keyPath);
             },
             handleCommand(command){
-                this.$message('click on item ' + command);
+                if (command) {
+                    // 执行跳转
+                    window.location.href = command;
+                }
             }
         }
     }
     var Ctor = Vue.extend(Main)
     new Ctor().$mount('#app')
-    new Vue().$mount('#card-link')
 </script>
-    
-    <nav class="uk-navbar uk-navbar-attached uk-margin-bottom">
-        <div class="uk-container uk-container-center">
-            <a href="/" class="uk-navbar-brand">Jeff Wang</a>
-            <ul class="uk-navbar-nav">
-                <li data-url="blogs"><a href="/"><i class="uk-icon-home"></i> 博客</a></li>
-            </ul>
-            <div class="uk-navbar-flip">
-                <ul class="uk-navbar-nav uk-hidden-small">
-                {% if __user__ %}
-                    <li class="uk-parent" data-uk-dropdown>
-                        <a href="#0"><i class="uk-icon-user"></i> {{ __user__.name }}</a>
-                        <div class="uk-dropdown uk-dropdown-navbar">
-                            <ul class="uk-nav uk-nav-navbar">
-                                {% if __user__.admin == 1 %}
-                                <li><a href="/manage/" target="_blank"><i class="uk-icon-sign-out"></i> 后台管理</a></li>
-                                {% endif %}
-                                <li><a href="/signout"><i class="uk-icon-sign-out"></i> 登出</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                {% else %}
-                    <li><a href="/signin"><i class="uk-icon-sign-in"></i> 登陆</a></li>
-                    <li><a href="/register"><i class="uk-icon-edit"></i> 注册</a></li>
-                {% endif %}
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="uk-container uk-container-center">
-        <div class="uk-grid">
-            <!-- content -->
-            {% block content %}
-            {% endblock %}
-            <!-- // content -->
-        </div>
-    </div>
-
-    <div class="uk-margin-large-top" style="background-color:#eee; border-top:1px solid #ccc;">
-        <div class="uk-container uk-container-center uk-text-center">
-            <div class="uk-panel uk-margin-top uk-margin-bottom">
-                <p>
-                    <a target="_blank" href="http://weibo.com/liaoxuefeng" class="uk-icon-button uk-icon-weibo"></a>
-                    <a target="_blank" href="https://github.com/michaelliao" class="uk-icon-button uk-icon-github"></a>
-                </p>
-                <p>Powered by <a href="http://awesome.liaoxuefeng.com">Awesome Python Webapp</a>. Copyright &copy; 2020. </p>
-                <p><a href="http://www.liaoxuefeng.com/" target="_blank">www.liaoxuefeng.com</a>. All rights reserved.</p>
-            </div>
-
-        </div>
-    </div>
-</body>
+{% block beforehead %}<!-- before head  -->{% endblock %}
 </html>
