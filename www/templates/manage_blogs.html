@@ -1,77 +1,14 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-05-12 15:50:54
+ * @LastEditTime: 2020-05-21 17:16:37
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \code\py-webapp\www\templates\manage_blogs.html
+--> 
 {% extends '__base__.html' %}
 
 {% block title %}博客{% endblock %}
-
-{% block beforehead %}
-
-<script> 
-
-function initVM(data) {
-    // Vue.component("parent",{
-    //     template: '#vm',
-    //     data: {
-    //         blogs: data.blogs,
-    //         page: data.page
-    //     },
-    //     methods: {
-    //         edit_blog: function (blog) {
-    //             location.assign('/manage/blogs/edit?id=' + blog.id);
-    //         },
-    //         delete_blog: function (blog) {
-    //             if (confirm('确认要删除“' + blog.name + '”？删除后不可恢复！')) {
-    //                 postJSON('/api/blogs/' + blog.id + '/delete', function (err, r) {
-    //                     if (err) {
-    //                         return alert(err.message || err.error || err);
-    //                     }
-    //                     refresh();
-    //                 });
-    //             }
-    //         }
-    //     }
-    // });
-    console.log(data);
-    
-    $('#vm').show();
-    var vm = new Vue({
-        el: '#app',
-        data: {
-            blogs: data.blogs,
-            page: data.page
-        },
-        methods: {
-            edit_blog: function (blog) {
-                location.assign('/manage/blogs/edit?id=' + blog.id);
-            },
-            delete_blog: function (blog) {
-                if (confirm('确认要删除“' + blog.name + '”？删除后不可恢复！')) {
-                    postJSON('/api/blogs/' + blog.id + '/delete', function (err, r) {
-                        if (err) {
-                            return alert(err.message || err.error || err);
-                        }
-                        refresh();
-                    });
-                }
-            }
-        }
-    });
-    // $('#vm').show();
-}
-
-$(function() {
-    getJSON('/api/blogs', {
-        page: [[ page_index ]]
-    }, function (err, results) {
-        if (err) {
-            return fatal(err);
-        }
-        $('#loading').hide();
-        initVM(results);
-    });
-});
-
-</script>
-
-{% endblock %}
 
 {% block content %}
 
@@ -128,5 +65,50 @@ $(function() {
 
         <div v-component="pagination" v-with="page"></div>
     </div>
+
+{% endblock %}
+
+{% block script %}
+
+<script> 
+
+function initVM(data) {
+    $('#vm').show();
+    // 与继承页面 functions 合并
+    functions = $.extend(functions , {
+        edit_blog: function (blog) {
+            location.assign('/manage/blogs/edit?id=' + blog.id);
+        },
+        delete_blog: function (blog) {
+            if (confirm('确认要删除“' + blog.name + '”？删除后不可恢复！')) {
+                postJSON('/api/blogs/' + blog.id + '/delete', function (err, r) {
+                    if (err) {
+                        return alert(err.message || err.error || err);
+                    }
+                    refresh();
+                });
+            }
+        }
+    })
+    // 与继承页面 data 合并
+    data = $.extend(data, {
+        blogs: data.blogs,
+        page: data.page
+    })
+}
+
+$(function() {
+    getJSON('/api/blogs', {
+        page: [[ page_index ]]
+    }, function (err, results) {
+        if (err) {
+            return fatal(err);
+        }
+        $('#loading').hide();
+        initVM(results);
+    });
+});
+
+</script>
 
 {% endblock %}

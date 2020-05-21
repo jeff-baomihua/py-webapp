@@ -2,35 +2,6 @@
 
 {% block title %}[[ blog.name ]]{% endblock %}
 
-{% block beforehead %}
-
-<script>
-
-
-
-var comment_url = '/api/blogs/[[ blog.id ]]/comments';
-
-// $(function () {
-//     var $form = $('#form-comment');
-//     $form.submit(function (e) {
-//         e.preventDefault();
-//         $form.showFormError('');
-//         var content = $form.find('textarea').val().trim();
-//         if (content==='') {
-//             return $form.showFormError('请输入评论内容！');
-//         }
-//         $form.postJSON(comment_url, { content: content }, function (err, result) {
-//             if (err) {
-//                 return $form.showFormError(err);
-//             }
-//             refresh();
-//         });
-//     });
-// });
-</script>
-
-{% endblock %}
-
 {% block content %}
 <el-row type="flex" justify="center" :gutter="10">
     <el-col :span="6" :xs="24" :sm="24" class="main-col">
@@ -83,27 +54,25 @@ var comment_url = '/api/blogs/[[ blog.id ]]/comments';
         </div>
         <el-divider><i class="el-icon-s-comment"></i>讨论数量 3</el-divider>
         <div class="grid-content">
-            <div id="vm">
-                <div class="comment">
-                    <a href="/" class="left">
-                        <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
-                    </a>
-                    <!-- 评论 -->
-                    <el-card class="box-card box-shadow">
-                        <el-input
-                        type="textarea"
-                        :rows="4"
-                        placeholder="说点什么吧"
-                        v-model="textarea"
-                        maxlength="200"
-                        resize="none"
-                        show-word-limit
-                        >
-                        </el-input>
-                        <div style="margin-top: 15px;"></div>
-                        <el-button v-on:click="click" type="primary" size="medium">发表评论</el-button>
-                    </el-card>
-                </div>
+            <!-- 评论 -->
+            <div class="comment">
+                <a href="/" class="left">
+                    <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
+                </a>
+                <el-card class="box-card box-shadow">
+                    <el-input
+                    type="textarea"
+                    :rows="4"
+                    placeholder="说点什么吧"
+                    v-model="textarea"
+                    maxlength="200"
+                    resize="none"
+                    show-word-limit
+                    >
+                    </el-input>
+                    <div style="margin-top: 15px;"></div>
+                    <el-button @click="open" type="primary" size="medium">发表评论</el-button>
+                </el-card>
             </div>
             <!-- 评论列表 -->
             <div class="comment">
@@ -300,46 +269,40 @@ var comment_url = '/api/blogs/[[ blog.id ]]/comments';
 
 {% endblock %}
 
+{% block script %}
 
-<!-- <script>
-$(function(){
-    // var Main1 = {
-    //     data() {
-    //         return {
-    //         text: '',
-    //         textarea: ''
-    //         }
-    //     },
-    //     methods: {
-    //         click: function(){
-    //             alert(111);
-    //         }
-    //     }
-    // }
-    // var Ctor1 = Vue.extend(Main1)
-    // new Ctor1().$mount('#vm')
-    var vm = new Vue({
-        el: '#vm',// 绑定 DOM
-        data: {
-            textarea: ''
-        },// 数据模型
-        methods: { // 触发方法
-            click: function (event) {
-                alert(111);
-                // event.preventDefault();
-                // var $form = $('#vm').find('form');
-                // $form.postJSON(action, this.$data, function (err, r) {
-                //     if (err) {
-                //         $form.showFormError(err);
-                //     }
-                //     else {
-                //         return location.assign('/manage/blogs');
-                //     }
-                // });
-            }
+<script>
+// 与继承页面 functions 合并
+functions = $.extend(functions , {
+        open() {
+            this.$message('这是一条消息提示');
         }
-    });
-    $('#vm').show();
+    })
+// 与继承页面 data 合并
+data = $.extend(data, {
+    textarea: ''
 })
-</script> -->
+
+var comment_url = '/api/blogs/[[ blog.id ]]/comments';
+
+$(function () {
+    var $form = $('#form-comment');
+    $form.submit(function (e) {
+        e.preventDefault();
+        $form.showFormError('');
+        var content = $form.find('textarea').val().trim();
+        if (content==='') {
+            return $form.showFormError('请输入评论内容！');
+        }
+        $form.postJSON(comment_url, { content: content }, function (err, result) {
+            if (err) {
+                return $form.showFormError(err);
+            }
+            refresh();
+        });
+    });
+});
+</script>
+
+{% endblock %}
 

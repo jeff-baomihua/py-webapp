@@ -151,26 +151,31 @@
 </body>
 <!-- main script -->
 <script>
-    var Main = {
-        data() {
-            return {
-                activeIndex: '1'
-            };
+    var data = {activeIndex: '1'};
+    var functions = {
+        handleSelect(key, keyPath) {
+            console.log(key, keyPath);
         },
-        methods: {
-            handleSelect(key, keyPath) {
-                console.log(key, keyPath);
-            },
-            handleCommand(command){
-                if (command) {
-                    // 执行跳转
-                    window.location.href = command;
-                }
+        handleCommand(command){
+            if (command) {
+                // 执行跳转
+                window.location.href = command;
             }
         }
     }
+</script>
+<!-- extend script -->
+{% block script %}<!-- before head  -->{% endblock %}
+<!-- new Vue -->
+<script>
+    var Main = {
+        data() {
+            return data;
+        },
+        methods: functions
+    }
+    console.log(Main);
     var Ctor = Vue.extend(Main)
     new Ctor().$mount('#app')
 </script>
-{% block beforehead %}<!-- before head  -->{% endblock %}
 </html>
