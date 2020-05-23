@@ -456,3 +456,7 @@ function error(err) {
 function fatal(err) {
     _display_error($('#loading'), err);
 }
+
+function log(data) {
+    console.log(data);
+}

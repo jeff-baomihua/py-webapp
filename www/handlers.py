@@ -84,7 +84,8 @@ def cookie2user(cookie_str):
 def index(*, page='1'):
     page_index = get_page_index(page)
     num = yield from Blog.findNumber('count(id)')
-    page = Page(num)
+    page = Page(num, page_index)
+    print(page)
     if num == 0:
         blogs = []
     else:

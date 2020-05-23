@@ -1,114 +1,132 @@
-<!--
- * @Author: your name
- * @Date: 2020-05-12 15:50:54
- * @LastEditTime: 2020-05-21 17:16:37
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \code\py-webapp\www\templates\manage_blogs.html
---> 
 {% extends '__base__.html' %}
 
 {% block title %}博客{% endblock %}
 
-{% block content %}
+{% block beforehead %}
 
-    <div class="uk-width-1-1 uk-margin-bottom">
-        <div class="uk-panel uk-panel-box">
-            <ul class="uk-breadcrumb">
-                <li><a href="/manage/comments">评论</a></li>
-                <li class="uk-active"><span>博客</span></li>
-                <li><a href="/manage/users">用户</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <div id="error" class="uk-width-1-1">
-    </div>
-
-    <div id="loading" class="uk-width-1-1 uk-text-center">
-        <span><i class="uk-icon-spinner uk-icon-medium uk-icon-spin"></i> 正在加载...</span>
-    </div>
-
-    <div id="vm" class="uk-width-1-1">
-        <a href="/manage/blogs/create" class="uk-button uk-button-primary"><i class="uk-icon-plus"></i> 新博客</a>
-
-        <table class="uk-table uk-table-hover">
-            <thead>
-                <tr>
-                    <th class="uk-width-5-10">标题 / 摘要</th>
-                    <th class="uk-width-2-10">作者</th>
-                    <th class="uk-width-2-10">创建时间</th>
-                    <th class="uk-width-1-10">操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- v-for 循环 -->
-                <tr v-for="blog in blogs" >
-                    <td>
-                        <!-- v-attr 生成DOM节点属性 -->
-                        <!-- v-text 生成文本 -->
-                        <a target="_blank" :href="'/blog/' + blog.id" v-text="blog.name"></a>
-                    </td>
-                    <td>
-                        <a target="_blank" :href="'/user/' + blog.user_id" v-text="blog.user_name"></a>
-                    </td>
-                    <td>
-                        <span v-text="blog.created_at.toDateTime()"></span>
-                    </td>
-                    <td>
-                        <a href="#0" v-on:click="edit_blog(blog)"><i class="uk-icon-edit"></i>
-                        <a href="#0" v-on:click="delete_blog(blog)"><i class="uk-icon-trash-o"></i>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div v-component="pagination" v-with="page"></div>
-    </div>
-
-{% endblock %}
-
-{% block script %}
-
-<script> 
-
-function initVM(data) {
-    $('#vm').show();
-    // 与继承页面 functions 合并
-    functions = $.extend(functions , {
-        edit_blog: function (blog) {
-            location.assign('/manage/blogs/edit?id=' + blog.id);
-        },
-        delete_blog: function (blog) {
-            if (confirm('确认要删除“' + blog.name + '”？删除后不可恢复！')) {
-                postJSON('/api/blogs/' + blog.id + '/delete', function (err, r) {
-                    if (err) {
-                        return alert(err.message || err.error || err);
-                    }
-                    refresh();
-                });
-            }
+<script>
+// 与继承页面 methods 合并
+methods = $.extend(methods , {
+    handleClick(tab, event) {
+        window.location.href = tab.$attrs.href;
+    },
+    create_blog() {
+        window.location.href = '/manage/blogs/create';
+    },
+    edit_blog: function (blog) {
+        location.assign('/manage/blogs/edit?id=' + blog.id);
+    },
+    delete_blog: function (blog) {
+        if (confirm('确认要删除“' + blog.name + '”？删除后不可恢复！')) {
+            postJSON('/api/blogs/' + blog.id + '/delete', function (err, r) {
+                if (err) {
+                    return alert(err.message || err.error || err);
+                }
+                refresh();
+            });
         }
-    })
-    // 与继承页面 data 合并
-    data = $.extend(data, {
-        blogs: data.blogs,
-        page: data.page
-    })
-}
+    },
+    // 分页触发 
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+        // 从第一页开始请求 page = 1
+        getItemJson(1);
+    },
+    // 当前页触发
+    handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+        // 获取当前页
+        getItemJson(val);
+    }
+})
+// 与继承页面 data 合并
+data = $.extend(data, {
+    blogs: {},
+    page: {},
+    activeName: '2',
+    tableData: [],
+    loading: true
+})
 
 $(function() {
+    getItemJson([[page_index]])
+});
+
+function getItemJson(page_index) {
     getJSON('/api/blogs', {
-        page: [[ page_index ]]
+        page: page_index
     }, function (err, results) {
         if (err) {
             return fatal(err);
         }
-        $('#loading').hide();
-        initVM(results);
+        appVm.loading = false;
+        appVm.blogs = results.blogs;
+        log(results)
+        appVm.page = results.page;
+        appVm.tableData = results.blogs;
+        $('#vm').show();
     });
-});
+}
 
 </script>
 
 {% endblock %}
+
+{% block content %}
+
+    <el-row>
+        <el-col :span="24">
+            <el-tabs v-model="activeName" tab-position="top" @tab-click="handleClick">
+                <el-tab-pane label="评论" name="1" href="/manage/comments"></el-tab-pane>
+                <el-tab-pane label="博客" name="2" href="/manage/blogs">
+                    <!-- content start -->
+                    <el-card class="box-card">
+                        <el-button type="primary" size="small" @click="create-blog">新博客</el-button>
+                        <el-table :data="tableData" v-loading="loading" style="width: 100%">
+                            <el-table-column prop="name" label="标题 / 摘要">
+                                <template slot-scope='scope'>
+                                    <el-link type="primary" target='_blank' :href="'/blog/'+scope.row.id">{{ scope.row.name }}</el-link>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="user_name" label="作者">
+                                <template slot-scope='scope'>
+                                    <el-link type="primary" target='_blank' :href="'/user/'+scope.row.user_id">{{ scope.row.user_name }}</el-link>
+                                </template>
+                            </el-table-column>
+                            <el-table-column prop="created_at" label="日期">
+                                <template slot-scope='scope'>
+                                    <span>{{ scope.row.created_at.toDateTime() }}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column fixed="right" label="操作">
+                                <template slot-scope="scope">
+                                    <el-button @click="edit_blog(scope.row)" type="text" size="small">编辑</el-button>
+                                    <el-button @click="delete_blog(scope.row)" type="danger" size="mini">删除</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                        <br>
+                        <el-pagination class="center"
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="page.page_index"
+                        :page-size="page.page_size"
+                        :total="page.item_count"
+                        :hide-on-single-page="true"
+                        :page-sizes="[10, 20, 50, 100, 200, 500]"
+                        layout="total, slot, prev, pager, next, jumper"
+                        >
+                        <template>
+                            <span class="el-pagination__total">每页10条</span>
+                        </template>
+                        </el-pagination>
+                    </el-card>
+                    <!-- content end -->
+                </el-tab-pane>
+                <el-tab-pane label="用户" name="3" href="/manage/users"></el-tab-pane>
+            </el-tabs>
+        </el-col>
+    </el-row>
+
+{% endblock %}
+

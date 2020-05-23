@@ -118,6 +118,7 @@ a {
     width: 90%;
     margin: 0 auto;
     height: 100%;
+    max-width: 1200px;
 }
 .el-header-logo {
     float: left;
@@ -189,7 +190,7 @@ a {
 /* main */
 .el-main {
     margin-top: 66px;
-    /* min-height: 649px; */
+    min-height: 649px;
 }
 .el-main-layout {
     width: 90%;
@@ -326,6 +327,15 @@ a {
     font-size: 14px;
     line-height: 20px;
 }
-/* .comment .el-textarea__inner {
-    resize: none;
-} */
+
+/* alert */
+.el-alert {
+    margin: 10px 0;
+}
+
+/* pagination */
+
+/* margin-bottom-50 */
+.bottom-50 {
+    margin-bottom: 50px;
+}

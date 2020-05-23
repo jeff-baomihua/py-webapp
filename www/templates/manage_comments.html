@@ -6,6 +6,44 @@
 
 <script>
 
+// 与继承页面 methods 合并
+methods = $.extend(methods , {
+    handleClick(tab, event) {
+        window.location.href = tab.$attrs.href;
+    },
+    delete_comment: function (comment) {
+        var content = comment.content.length > 20 ? comment.content.substring(0, 20) + '...' : comment.content;
+        if (confirm('确认要删除评论“' + comment.content + '”？删除后不可恢复！')) {
+            postJSON('/api/comments/' + comment.id + '/delete', function (err, r) {
+                if (err) {
+                    return error(err);
+                }
+                refresh();
+            });
+        }
+    },
+    // 分页触发 
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+        // 从第一页开始请求 page = 1
+        getItemJson(1);
+    },
+    // 当前页触发
+    handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+        // 获取当前页
+        getItemJson(val);
+    }
+})
+// 与继承页面 data 合并
+data = $.extend(data, {
+    comments: {},
+    page: {},
+    activeName: '1',
+    tableData: [],
+    loading: true
+})
+
 function initVM(data) {
     $('#vm').show();
     var vm = new Vue({
@@ -15,32 +53,42 @@ function initVM(data) {
             page: data.page
         },
         methods: {
-            delete_comment: function (comment) {
-                var content = comment.content.length > 20 ? comment.content.substring(0, 20) + '...' : comment.content;
-                if (confirm('确认要删除评论“' + comment.content + '”？删除后不可恢复！')) {
-                    postJSON('/api/comments/' + comment.id + '/delete', function (err, r) {
-                        if (err) {
-                            return error(err);
-                        }
-                        refresh();
-                    });
-                }
-            }
+            
         }
     });
 }
 
 $(function() {
+    getItemJson([[page_index]])
+});
+
+function getItemJson(page_index) {
     getJSON('/api/comments', {
-        page: {{ page_index }}
+        page: page_index
     }, function (err, results) {
         if (err) {
             return fatal(err);
         }
-        $('#loading').hide();
-        initVM(results);
+        appVm.loading = false;
+        appVm.comments = results.comments;
+        log(results)
+        appVm.page = results.page;
+        appVm.tableData = results.comments;
+        $('#vm').show();
     });
-});
+}
+
+// $(function() {
+//     getJSON('/api/comments', {
+//         page: {{ page_index }}
+//     }, function (err, results) {
+//         if (err) {
+//             return fatal(err);
+//         }
+//         $('#loading').hide();
+//         initVM(results);
+//     });
+// });
 
 </script>
 
@@ -48,7 +96,59 @@ $(function() {
 
 {% block content %}
 
-    <div class="uk-width-1-1 uk-margin-bottom">
+<el-row>
+    <el-col :span="24">
+        <el-tabs v-model="activeName" tab-position="top" @tab-click="handleClick">
+            <el-tab-pane label="评论" name="1" href="/manage/comments">
+                <!-- content start -->
+                <el-card class="box-card">
+                    <el-table :data="tableData" v-loading="loading" style="width: 100%">
+                        <el-table-column prop="id" label="ID"></el-table-column>
+                        <el-table-column prop="user_name" label="作者">
+                            <template slot-scope='scope'>
+                                <el-link type="primary" target='_blank' :href="'/blog/'+scope.row.user_id">{{ scope.row.user_name }}</el-link>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="content" label="内容">
+                            <template slot-scope='scope'>
+                                <el-link type="primary" target='_blank' :href="'/blog/'+scope.row.blog_id">{{ scope.row.content }}</el-link>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="created_at" label="创建时间">
+                            <template slot-scope='scope'>
+                                <span>{{ scope.row.created_at.toDateTime() }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column fixed="right" label="操作">
+                            <template slot-scope="scope">
+                                <el-button @click="delete_comment(scope.row)" type="danger" size="mini" icon="el-icon-delete"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <br>
+                    <el-pagination class="center"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="page.page_index"
+                    :page-size="page.page_size"
+                    :total="page.item_count"
+                    :hide-on-single-page="true"
+                    :page-sizes="[10, 20, 50, 100, 200, 500]"
+                    layout="total, slot, prev, pager, next, jumper"
+                    >
+                    <template>
+                        <span class="el-pagination__total">每页10条</span>
+                    </template>
+                    </el-pagination>
+                </el-card>
+                <!-- content end -->
+            </el-tab-pane>
+            <el-tab-pane label="博客" name="2" href="/manage/blogs"></el-tab-pane>
+            <el-tab-pane label="用户" name="3" href="/manage/users"></el-tab-pane>
+        </el-tabs>
+    </el-col>
+</el-row>
+    <!-- <div class="uk-width-1-1 uk-margin-bottom">
         <div class="uk-panel uk-panel-box">
             <ul class="uk-breadcrumb">
                 <li class="uk-active"><span>评论</span></li>
@@ -93,5 +193,5 @@ $(function() {
             </tbody>
         </table>
         <div v-component="pagination" v-with="page"></div>
-    </div>
+    </div> -->
 {% endblock %}

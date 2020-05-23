@@ -2,6 +2,44 @@
 
 {% block title %}[[ blog.name ]]{% endblock %}
 
+{% block beforehead %}
+<script>
+var comment_url = '/api/blogs/[[ blog.id ]]/comments';
+// 与继承页面 methods 合并
+methods = $.extend(methods , {
+        onSubmit() {
+            var $form = $('#form-comment');
+            $form.showFormError('');
+            var content = $form.find('textarea').val().trim();
+            if (content==='') {
+                // return this.$message({
+                //     showClose: true,
+                //     message: '请输入评论内容！',
+                //     type: 'warning'
+                // });
+                $('.el-alert').show();
+            }
+            $form.postJSON(comment_url, { content: content }, function (err, result) {
+                if (err) {
+                    return this.$message({
+                        showClose: true,
+                        message: err.data,
+                        type: 'warning'
+                    });
+                }
+                refresh();
+            });
+        }
+    })
+// 与继承页面 data 合并
+data = $.extend(data, {
+    textarea: ''
+})
+
+</script>
+{% endblock %}
+
+
 {% block content %}
 <el-row type="flex" justify="center" :gutter="10">
     <el-col :span="6" :xs="24" :sm="24" class="main-col">
@@ -42,49 +80,76 @@
         <div class="grid-content box-shadow">
             <div class="segment article-content">
                 <a href="/" class="left">
-                    <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
+                    <el-avatar :size="48" src="[[ blog.user_image ]]"></el-avatar>
                 </a>
                 <div class="meta" style="max-width: 100%;display: inline-flex;">
-                    <a href="/" class="author">[[ __user__.name ]]</a>
+                    <a href="/" class="author">[[ blog.user_name  ]]</a>
                 </div>
                 <div class="text">
                     暂无个人描述~    
                 </div>
             </div>
         </div>
-        <el-divider><i class="el-icon-s-comment"></i>讨论数量 3</el-divider>
+        <el-divider><i class="el-icon-s-comment"></i>讨论数量 [[ comments|count ]]</el-divider>
         <div class="grid-content">
             <!-- 评论 -->
-            <div class="comment">
+            {% if __user__ %}
+            <div class="comment bottom-50">
                 <a href="/" class="left">
                     <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
                 </a>
-                <el-card class="box-card box-shadow">
+                <el-card id="form-comment" class="box-card box-shadow">
+                    <el-alert
+                        title="请输入评论内容！"
+                        type="warning" style="display: none;">
+                    </el-alert>
                     <el-input
                     type="textarea"
                     :rows="4"
                     placeholder="说点什么吧"
                     v-model="textarea"
-                    maxlength="200"
                     resize="none"
-                    show-word-limit
                     >
                     </el-input>
                     <div style="margin-top: 15px;"></div>
-                    <el-button @click="open" type="primary" size="medium">发表评论</el-button>
+                    <el-button @click="onSubmit" type="primary" size="medium">发表评论</el-button>
                 </el-card>
             </div>
+            {% else %}
+            <div class="comment bottom-50">
+                <a href="/" class="left">
+                    <el-avatar :size="48" src="/static/img/user-2.png"></el-avatar>
+                </a>
+                <el-card id="form-comment" class="box-card box-shadow">
+                    <el-input
+                    type="textarea"
+                    :rows="4"
+                    :disabled="true"
+                    placeholder="说点什么吧"
+                    v-model="textarea"
+                    resize="none"
+                    >
+                    </el-input>
+                    <div style="margin-top: 15px;"></div>
+                    <a href="/signin">
+                        <el-button type="primary" size="medium">登录后发表评论</el-button>
+                    </a>
+                </el-card>
+            </div>
+            
+            {% endif %}
             <!-- 评论列表 -->
+            {% for comment in comments %}
             <div class="comment">
-                <a href="/" class="left">
-                    <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
+                <a href="/" class="left" >
+                    <el-avatar :size="48" src="[[ comment.user_image ]]"></el-avatar>
                 </a>
                 <el-card class="box-card box-shadow">
                     <!-- box-header -->
                     <div slot="header" class="clearfix">
-                        <a href="/"><span class="author">[[ __user__.name ]]</span></a>
+                        <a href="/"><span class="author">[[ comment.user_name ]]</span>{% if comment.user_id==blog.user_id %}(作者){% endif %}</a>
                         <span class="separator"></span>
-                        <span class="el-link cursor-default">2020-05-17 18:50:53</span>
+                        <span class="el-link cursor-default">[[ comment.created_at|datetime ]]</span>
                         <el-tooltip class="item" effect="dark" content="回复" placement="top">
                             <el-button style="float: right; padding: 3px 0" type="text">
                                 <i class="el-icon-chat-dot-round" style="font-size: 16px;"></i>
@@ -92,94 +157,31 @@
                         </el-tooltip>
                     </div>
                     <!-- box-body -->
-                    <!-- <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image"> -->
-                    好吃的汉堡
-                    我喜欢的恢复湖面
+                    [[ comment.html_content|safe ]]
                     <!-- box-footer -->
-                    <el-divider class="el-divider--horizontal-medium"></el-divider>
+                    <!-- <el-divider class="el-divider--horizontal-medium"></el-divider>
                     <p>
                         <el-link :underline="false">
                             <i class="fa fa-thumbs-o-up"></i> 1809
                         </el-link>
                         <span class="separator"></span>
                         <el-link :underline="false"> 回复</el-link>
-                    </p>
+                    </p> -->
                 </el-card>
             </div>
-            <div class="comment">
-                <a href="/" class="left">
-                    <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
-                </a>
-                <el-card class="box-card box-shadow">
-                    <!-- box-header -->
-                    <div slot="header" class="clearfix">
-                        <a href="/"><span class="author">[[ __user__.name ]]</span></a>
-                        <span class="separator"></span>
-                        <span class="el-link cursor-default">2020-05-17 18:50:53</span>
-                        <el-tooltip class="item" effect="dark" content="回复" placement="top">
-                            <el-button style="float: right; padding: 3px 0" type="text">
-                                <i class="el-icon-chat-dot-round" style="font-size: 16px;"></i>
-                            </el-button>
-                        </el-tooltip>
-                    </div>
-                    <!-- box-body -->
-                    <!-- <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image"> -->
-                    <div>
-                        @jeff 好吃的汉堡
-                        我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面我喜欢的恢复湖面
-                    </div>
-                    <!-- box-footer -->
-                    <el-divider class="el-divider--horizontal-medium"></el-divider>
-                    <p>
-                        <el-link :underline="false">
-                            <i class="fa fa-thumbs-o-up"></i> 1809
-                        </el-link>
-                        <span class="separator"></span>
-                        <el-link :underline="false"> 回复</el-link>
-                    </p>
-                </el-card>
-            </div>
-            <div class="comment">
-                <a href="/" class="left">
-                    <el-avatar :size="48" src="[[ __user__.image ]]"></el-avatar>
-                </a>
-                <el-card class="box-card box-shadow">
-                    <!-- box-header -->
-                    <div slot="header" class="clearfix">
-                        <a href="/"><span class="author">[[ __user__.name ]]</span></a>
-                        <span class="separator"></span>
-                        <span class="el-link cursor-default">2020-05-17 18:50:53</span>
-                        <el-tooltip class="item" effect="dark" content="回复" placement="top">
-                            <el-button style="float: right; padding: 3px 0" type="text">
-                                <i class="el-icon-chat-dot-round" style="font-size: 16px;"></i>
-                            </el-button>
-                        </el-tooltip>
-                    </div>
-                    <!-- box-body -->
-                    <!-- <img src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image"> -->
-                    好吃的汉堡
-                    我喜欢的恢复湖面
-                    <!-- box-footer -->
-                    <el-divider class="el-divider--horizontal-medium"></el-divider>
-                    <p>
-                        <el-link :underline="false">
-                            <i class="fa fa-thumbs-o-up"></i> 1809
-                        </el-link>
-                        <span class="separator"></span>
-                        <el-link :underline="false"> 回复</el-link>
-                    </p>
-                </el-card>
-            </div>
+            {% else %}
+            <p style="text-align: center;color: #CCC;">(=￣ω￣=)··· 还没有人评论呢...</p>
+            {% endfor %}
         </div>
     </el-col>
     <el-col class="hidden-xs-only siderbar-right">
         <el-card class="box-card center">
             <a href="/">
-                <el-avatar :size="100" src="[[ __user__.image ]]"></el-avatar>
+                <el-avatar :size="100" src="[[ blog.user_image ]]"></el-avatar>
             </a>
             <br>
             <br>
-            <el-link type="primary" class="author">[[ __user__.name ]]</el-link>
+            <el-link type="primary" class="author">[[ blog.user_name ]]</el-link>
         </el-card>
         <el-card class="box-card">
             <div slot="header" class="clearfix">
@@ -193,116 +195,4 @@
             </div>
         </el-card>
     </el-col>
-    
-    <!-- <div class="uk-width-medium-3-4">
-        <article class="uk-article">
-            <h2 class="uk-article-title">{{ blog.name }}</h2>
-            <p class="uk-article-meta">发表于{{ blog.created_at|datetime }}</p>
-            <p>{{ blog.html_content|safe }}</p>
-        </article>
-
-        <hr class="uk-article-divider">
-
-    {% if __user__ %}
-        <h3>发表评论</h3>
-
-        <article class="uk-comment">
-            <header class="uk-comment-header">
-                <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ __user__.image }}">
-                <h4 class="uk-comment-title">{{ __user__.name }}</h4>
-            </header>
-            <div class="uk-comment-body">
-                <form id="form-comment" class="uk-form">
-                    <div class="uk-alert uk-alert-danger uk-hidden"></div>
-                    <div class="uk-form-row">
-                        <textarea rows="6" placeholder="说点什么吧" style="width:100%;resize:none;"></textarea>
-                    </div>
-                    <div class="uk-form-row">
-                        <button type="submit" class="uk-button uk-button-primary"><i class="uk-icon-comment"></i> 发表评论</button>
-                    </div>
-                </form>
-            </div>
-        </article>
-
-        <hr class="uk-article-divider">
-    {% endif %}
-
-        <h3>最新评论</h3>
-
-        <ul class="uk-comment-list">
-            {% for comment in comments %}
-            <li>
-                <article class="uk-comment">
-                    <header class="uk-comment-header">
-                        <img class="uk-comment-avatar uk-border-circle" width="50" height="50" src="{{ comment.user_image }}">
-                        <h4 class="uk-comment-title">{{ comment.user_name }} {% if comment.user_id==blog.user_id %}(作者){% endif %}</h4>
-                        <p class="uk-comment-meta">{{ comment.created_at|datetime }}</p>
-                    </header>
-                    <div class="uk-comment-body">
-                        {{ comment.html_content|safe }}
-                    </div>
-                </article>
-            </li>
-            {% else %}
-            <p>还没有人评论...</p>
-            {% endfor %}
-        </ul>
-
-    </div>
-
-    <div class="uk-width-medium-1-4">
-        <div class="uk-panel uk-panel-box">
-            <div class="uk-text-center">
-                <img class="uk-border-circle" width="120" height="120" src="{{ blog.user_image }}">
-                <h3>{{ blog.user_name }}</h3>
-            </div>
-        </div>
-        <div class="uk-panel uk-panel-header">
-            <h3 class="uk-panel-title">友情链接</h3>
-            <ul class="uk-list uk-list-line">
-                <li><i class="uk-icon-link"></i> <a href="#">编程</a></li>
-                <li><i class="uk-icon-link"></i> <a href="#">思考</a></li>
-                <li><i class="uk-icon-link"></i> <a href="#">读书</a></li>
-            </ul>
-        </div>
-    </div> -->
-
 {% endblock %}
-
-{% block script %}
-
-<script>
-// 与继承页面 functions 合并
-functions = $.extend(functions , {
-        open() {
-            this.$message('这是一条消息提示');
-        }
-    })
-// 与继承页面 data 合并
-data = $.extend(data, {
-    textarea: ''
-})
-
-var comment_url = '/api/blogs/[[ blog.id ]]/comments';
-
-$(function () {
-    var $form = $('#form-comment');
-    $form.submit(function (e) {
-        e.preventDefault();
-        $form.showFormError('');
-        var content = $form.find('textarea').val().trim();
-        if (content==='') {
-            return $form.showFormError('请输入评论内容！');
-        }
-        $form.postJSON(comment_url, { content: content }, function (err, result) {
-            if (err) {
-                return $form.showFormError(err);
-            }
-            refresh();
-        });
-    });
-});
-</script>
-
-{% endblock %}
-

@@ -5,6 +5,19 @@
 {% block beforehead %}
 
 <script>
+methods = $.extend(methods, {
+    // 当前页触发
+    handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+        // 获取当前页
+        window.location.href = '/?page=' + val;
+    }
+})
+// 与继承页面 data 合并
+data = $.extend(data, {
+    blogs: {},
+    page: {}
+})
 </script>
 
 {% endblock %}
@@ -53,11 +66,13 @@
                 {% endfor %}
                 <!-- [[ pagination('/?page=', page) ]] -->
                 <br>
-                <el-pagination
-                :page-size="10"
-                :pager-count="11"
-                layout="prev, pager, next"
-                :total="20">
+                <el-pagination class="center"
+                @current-change="handleCurrentChange"
+                :current-page="[[ page.page_index ]]"
+                :page-size="[[ page.page_size ]]"
+                :total="[[ page.item_count ]]"
+                :hide-on-single-page="true"
+                layout="prev, pager, next">
                 </el-pagination>
                 <br>
             </div>

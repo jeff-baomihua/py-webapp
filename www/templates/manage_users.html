@@ -6,28 +6,74 @@
 
 <script>
 
-function initVM(data) {
-    $('#vm').show();
-    var vm = new Vue({
-        el: '#vm',
-        data: {
-            users: data.users,
-            page: data.page
-        }
-    });
-}
+// 与继承页面 methods 合并
+methods = $.extend(methods , {
+    handleClick(tab, event) {
+        window.location.href = tab.$attrs.href;
+    },
+    // 分页触发 
+    handleSizeChange(val) {
+        console.log(`每页 ${val} 条`);
+        // 从第一页开始请求 page = 1
+        getItemJson(1);
+    },
+    // 当前页触发
+    handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+        // 获取当前页
+        getItemJson(val);
+    }
+})
+// 与继承页面 data 合并
+data = $.extend(data, {
+    blogs: {},
+    page: {},
+    activeName: '3',
+    tableData: [],
+    loading: true
+})
 
 $(function() {
+    getItemJson([[page_index]])
+});
+
+function getItemJson(page_index) {
     getJSON('/api/users', {
-        page: {{ page_index }}
+        page: page_index
     }, function (err, results) {
         if (err) {
             return fatal(err);
         }
-        $('#loading').hide();
-        initVM(results);
+        appVm.loading = false;
+        appVm.blogs = results.users;
+        log(results)
+        appVm.page = results.page;
+        appVm.tableData = results.users;
+        $('#vm').show();
     });
-});
+}
+// function initVM(data) {
+//     $('#vm').show();
+//     var vm = new Vue({
+//         el: '#vm',
+//         data: {
+//             users: data.users,
+//             page: data.page
+//         }
+//     });
+// }
+
+// $(function() {
+//     getJSON('/api/users', {
+//         page: {{ page_index }}
+//     }, function (err, results) {
+//         if (err) {
+//             return fatal(err);
+//         }
+//         $('#loading').hide();
+//         // initVM(results);
+//     });
+// });
 
 </script>
 
@@ -35,7 +81,54 @@ $(function() {
 
 {% block content %}
 
-    <div class="uk-width-1-1 uk-margin-bottom">
+<el-row>
+    <el-col :span="24">
+        <el-tabs v-model="activeName" tab-position="top" @tab-click="handleClick">
+            <el-tab-pane label="评论" name="1" href="/manage/comments"></el-tab-pane>
+            <el-tab-pane label="博客" name="2" href="/manage/blogs"></el-tab-pane>
+            <el-tab-pane label="用户" name="3" href="/manage/users">
+                <!-- content start -->
+                <el-card class="box-card">
+                    <el-table :data="tableData" v-loading="loading" style="width: 100%">
+                        <el-table-column prop="name" label="名字">
+                            <template slot-scope='scope'>
+                                {{ scope.row.name }}
+                                <span v-if="scope.row.admin" style="color:#d05"><i class="uk-icon-key"></i> 管理员</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="email" label="电子邮件">
+                            <template slot-scope="scope">
+                                <el-link type="primary" target='_blank' :href="'mailto:'+scope.row.email">{{ scope.row.email }}</el-link>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="created_at" label="日期">
+                            <template slot-scope='scope'>
+                                <span>{{ scope.row.created_at.toDateTime() }}</span>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <br>
+                    <el-pagination class="center"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="page.page_index"
+                    :page-size="page.page_size"
+                    :total="page.item_count"
+                    :hide-on-single-page="true"
+                    :page-sizes="[10, 20, 50, 100, 200, 500]"
+                    layout="total, slot, prev, pager, next, jumper"
+                    >
+                    <template>
+                        <span class="el-pagination__total">每页10条</span>
+                    </template>
+                    </el-pagination>
+                </el-card>
+                <!-- content end -->
+            </el-tab-pane>
+        </el-tabs>
+    </el-col>
+</el-row>
+    <!-- <div class="uk-width-1-1 uk-margin-bottom">
         <div class="uk-panel uk-panel-box">
             <ul class="uk-breadcrumb">
                 <li><a href="/manage/comments">评论</a></li>
@@ -77,6 +170,6 @@ $(function() {
             </tbody>
         </table>
         <div v-component="pagination" v-with="page"></div>
-    </div>
+    </div> -->
 
 {% endblock %}
